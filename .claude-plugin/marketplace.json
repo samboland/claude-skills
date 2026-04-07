@@ -1,0 +1,26 @@
+{
+  "name": "sam-claude-skills",
+  "owner": {
+    "name": "Sam Boland"
+  },
+  "metadata": {
+    "description": "Custom Claude Code skills by Sam Boland",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "malware-static-analysis",
+      "source": "malware-static-analysis",
+      "description": "Automated static malware analysis pipeline for Windows PE binaries. Runs pefile, YARA, and Ghidra headless decompilation, queries VirusTotal, and generates a comprehensive markdown report. STATIC ANALYSIS ONLY — never executes the target binary.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Sam Boland"
+      },
+      "repository": "https://github.com/samboland/claude-skills",
+      "license": "MIT",
+      "keywords": ["malware", "security", "reverse-engineering", "pe", "ghidra", "virustotal"],
+      "category": "security"
+    }
+  ]
+}
