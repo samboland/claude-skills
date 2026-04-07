@@ -5,15 +5,14 @@
   },
   "metadata": {
     "description": "Custom Claude Code skills by Sam Boland",
-    "version": "1.0.0",
-    "pluginRoot": "./plugins"
+    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "malware-static-analysis",
-      "source": "malware-static-analysis",
+      "source": "./plugins/malware-static-analysis",
       "description": "Automated static malware analysis pipeline for Windows PE binaries. Runs pefile, YARA, and Ghidra headless decompilation, queries VirusTotal, and generates a comprehensive markdown report. STATIC ANALYSIS ONLY — never executes the target binary.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Sam Boland"
       },
