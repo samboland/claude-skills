@@ -20,6 +20,19 @@
       "license": "MIT",
       "keywords": ["malware", "security", "reverse-engineering", "pe", "ghidra", "virustotal"],
       "category": "security"
+    },
+    {
+      "name": "team",
+      "source": "./plugins/team",
+      "description": "2-person dev team workflow skills: file-or-forge task ledger, identity-aware triage, end-of-session closeout, bidirectional GH/GitLab issue sync. Supports peer mode (equal partners) and boss-employee mode (top-down assignment with boss-friendly GH UI workflow). Config-driven; no hardcoded names.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Sam Boland"
+      },
+      "repository": "https://github.com/samboland/claude-skills",
+      "license": "MIT",
+      "keywords": ["team", "workflow", "issues", "github", "gitlab", "task-tracking", "two-person"],
+      "category": "workflow"
     }
   ]
 }

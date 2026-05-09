@@ -9,11 +9,18 @@ Add this repo as a marketplace and install the skills you want:
 ```
 /plugin marketplace add samboland/claude-skills
 /plugin install malware-static-analysis@sam-claude-skills
+/plugin install team@sam-claude-skills
 ```
 
 That's it. The skill becomes available as a slash command.
 
 ## Available Skills
+
+### `/team:*`
+
+Two-person dev team workflow plugin. Bundles `whatdoido`, `issue`, `goodnight`, and `sync-tasks` skills for managing tasks across local files and GitHub/GitLab issues. Config-driven (no hardcoded names); supports peer-equal and boss-employee modes.
+
+See [`plugins/team/README.md`](plugins/team/README.md) for full documentation, or [`plugins/team/docs/setup.md`](plugins/team/docs/setup.md) for the 10-minute adoption walkthrough.
 
 ### `/malware-static-analysis`
 
@@ -55,14 +62,17 @@ claude-skills/
 ├── .claude-plugin/
 │   └── marketplace.json          # Lists all plugins
 └── plugins/
-    └── malware-static-analysis/
-        ├── .claude-plugin/
-        │   └── plugin.json       # Plugin manifest
-        └── skills/
-            └── malware-static-analysis/
-                ├── SKILL.md
-                └── ghidra_scripts/
-                    └── DecompileAllFunctions.java
+    ├── malware-static-analysis/
+    │   ├── .claude-plugin/plugin.json
+    │   └── skills/malware-static-analysis/
+    │       ├── SKILL.md
+    │       └── ghidra_scripts/DecompileAllFunctions.java
+    └── team/
+        ├── .claude-plugin/plugin.json
+        ├── README.md
+        ├── skills/{whatdoido,issue,goodnight,sync-tasks}/SKILL.md
+        ├── templates/{team-config.toml.tmpl,TODO.md.tmpl,DONE.md.tmpl,CLAUDE-team-block.md}
+        └── docs/{modes.md,setup.md}
 ```
 
 ## License

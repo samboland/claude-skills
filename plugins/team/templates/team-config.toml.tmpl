@@ -1,0 +1,92 @@
+# team-config.toml
+#
+# Copy this file to your project root as `team-config.toml` and edit the
+# placeholder values. The /team:* skills read this file at runtime to drive
+# their behavior. Without it, the skills will refuse to run and tell you
+# what's missing.
+#
+# Commit this file. It is not secret; it is project metadata.
+
+[team]
+# "peer" or "boss-employee".
+# - peer: two equal partners; either can assign, either can ask the other.
+# - boss-employee: top-down assignment; one person owns scoping, the other
+#   executes. Goodnight posts a forge-comment digest so the boss can track
+#   progress in the forge UI without using Claude.
+mode = "peer"
+
+# For peer mode:
+members = ["DEV1", "DEV2"]
+
+# For boss-employee mode (uncomment + delete `members` above):
+# boss = "BOSS_NAME"
+# employee = "EMPLOYEE_NAME"
+
+# How skills detect "who is at the keyboard". Listed in priority order.
+# git_config: read `git config user.name` and match against members / boss / employee.
+# env_var: read $TEAM_USER (or whatever you set in env_var_name below) and match.
+# prompt: ask the user. Annoying; only used as last resort.
+identity_signals = ["git_config", "env_var", "prompt"]
+env_var_name = "TEAM_USER"
+
+# Optional: map git identities to team names. Use when git config user.name
+# doesn't match the team member name (e.g. "Sam Boland" vs config name "Sam").
+# Skills lowercase + substring match against this map first.
+[team.identity_map]
+# "samboland" = "Sam"
+# "sam boland" = "Sam"
+# "rob smith" = "Rob"
+
+[forge]
+# "github" or "gitlab".
+type = "github"
+
+# owner/repo (GitHub) or group/project (GitLab).
+repo = "OWNER/REPO"
+
+# Default assignee for new issues created via /team:issue.
+# In boss-employee mode this is typically the employee.
+# In peer mode leave empty and the skill will ask each time.
+default_assignee = ""
+
+[source_of_truth]
+# "file-first": local TODO/DONE files are canonical; forge issues mirror.
+#   /team:sync-tasks pushes file changes to the forge.
+#   New forge-side issues NOT created by the sync show up in /team:whatdoido
+#   as "untracked, surface to file?" entries.
+# "forge-first": forge issues are canonical; local files are a read-cache.
+#   /team:sync-tasks pulls forge state into the files.
+#   Local file edits push back, but get overwritten on next pull conflict.
+mode = "file-first"
+
+[conventions]
+# Em dashes (U+2014) and en dashes (U+2013) banned in task file bodies.
+# When true, /team:issue and /team:sync-tasks block on em-dash detection
+# and ask the user to rewrite (use ":" for definition / ";" for clause join).
+em_dash_ban = false
+
+# Date format used in DONE.md ledger entries and status tags.
+date_format = "YYYY-MM-DD"
+
+# Issue title format. {N} substitutes the 5-digit ID, {title} the title.
+issue_title_format = "#{N} {title}"
+
+# Question doc filename. The skills auto-create / read this if it exists.
+# In boss-employee mode the convention is one-direction (employee -> boss),
+# so a single file like "QUESTIONS-FOR-ROB.md" is right. In peer mode use
+# something like "QUESTIONS.md".
+questions_file = "QUESTIONS.md"
+
+[labels]
+# Label names used by /team:sync-tasks when mirroring to the forge.
+# Override these if your project already uses different label conventions.
+priority_critical = "Critical"
+priority_high = "High"
+priority_medium = "Medium"
+priority_low = "Low"
+priority_nominal = "Nominal"
+status_in_progress = "IP"
+status_blocked_internal = "Blocked (Internal)"
+status_blocked_external = "Blocked (External)"
+type_todo = "TODO"
+type_question = "Question"
