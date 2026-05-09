@@ -112,6 +112,6 @@ git push
 
 ## Two-person setup notes
 
-Both members install the plugin (it's a plugin install per Claude Code instance). The config file in the repo is shared — both members read the same `team-config.toml`. Identity differs because `git config user.name` differs per machine.
+Both members install the plugin (one Claude Code install per machine, per project as needed). The config file in the repo is shared — both members read the same `team-config.toml`. Identity differs because `git config user.name` differs per machine.
 
-If only one member uses Claude (boss-employee mode where the boss stays in the forge UI), only the employee installs the plugin. The boss never runs `/team:*` skills; they interact via the forge web UI and read the digest comments the employee's `/team:goodnight` posts.
+In boss-employee mode where the boss is comfortable in the forge UI for filing tickets, the digest comment from `/team:goodnight` gives them a passive "what shipped today" feed without needing to run skills themselves. They can still run `/team:whatdoido` or `/team:issue` when convenient — it's a preference, not a constraint.

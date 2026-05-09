@@ -34,9 +34,9 @@ default_assignee = ""   # empty = ask at creation
 
 Asymmetric. The boss sets scope, the employee executes. Subtle but real differences from peer mode:
 
-- The boss may not use Claude at all — they live in the forge UI.
 - Assignments default top-down (boss → employee).
-- Status visibility for the boss has to flow through the forge, not local files.
+- The boss often prefers the forge UI for filing tickets even when they also use Claude. The plugin makes that comfortable: tickets the boss files in the GH UI flow into the employee's local `todo/` on the next sync; the employee never has to ask the boss to "use the right tool."
+- Status digests can mirror to a forge comment so the boss tracks progress without opening Claude.
 
 **Configuration shape:**
 
@@ -59,18 +59,18 @@ default_assignee = "Sam"   # the employee, by default
   - Employee role: surfaces everything assigned-to-employee + everything unassigned (employee owns the default queue).
   - Boss role: surfaces decision/scoping tasks, plus any questions employee flagged for boss.
 - `/team:goodnight`:
-  - Employee invokes: same closeout as peer mode, **plus** posts a status digest as a forge-issue comment so the boss sees progress without opening Claude.
-  - Boss invokes: closeout without digest (they're already in the forge).
+  - Employee invokes: same closeout as peer mode, plus optionally posts a status digest as a forge-issue comment so the boss can skim in the forge UI when they're not in Claude.
+  - Boss invokes: closeout without digest (they can run `/team:whatdoido` themselves).
 - `/team:sync-tasks`:
-  - Default `source_of_truth.mode = "forge-first"` recommended (so boss can edit issues directly and changes flow to the employee's local files).
+  - Default `source_of_truth.mode = "forge-first"` works well when the boss prefers filing tickets in the GH UI; either side wins, just pick one.
 
 **Question docs:** `QUESTIONS-FOR-<BOSS>.md`. One direction. Employee asks up; boss answers in the file or in the forge UI. The skill mirrors questions to the forge with `kind:question-for-boss` label so the boss sees them in their issue inbox.
 
-**Boss-friendly affordances:**
+**Affordances for the boss:**
 
-- The session digest comment thread on a long-lived "Session digests" issue gives the boss a chronological feed of what shipped each session.
-- Issues created via the GH UI directly (i.e. boss types in the browser) flow into the employee's local `todo/` on next `/team:sync-tasks` pull, with no Claude action required from the boss.
-- Blocker chains use the `Blocked (External)` label so a `gh issue list --label "Blocked (External)"` query gives the boss a list of "things waiting on me to decide."
+- The session digest comment thread on a long-lived "Session digests" issue gives a chronological feed of what shipped each session, readable in the forge UI without booting Claude.
+- Issues filed in the GH UI flow into the employee's local `todo/` on next `/team:sync-tasks` pull; the boss isn't forced to use Claude to file work.
+- Blocker chains use the `Blocked (External)` label so a `gh issue list --label "Blocked (External)"` query lists "things waiting on the boss to decide."
 
 ## Switching modes
 

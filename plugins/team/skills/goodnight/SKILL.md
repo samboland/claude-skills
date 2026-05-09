@@ -1,6 +1,6 @@
 ---
 name: goodnight
-description: End-of-session closeout. Audits work done this session, reconciles forge issues vs TODO/DONE files vs actual code, closes what is truly complete, narrows residue, moves completed todos to done/, commits + pushes cleanup, leaves a status report. Anti-drift, anti-fake-completion. In boss-employee mode also posts a forge-comment digest so the boss can see progress without opening Claude. Trigger:  "/team:goodnight", "sign off", "wrap up", "closeout", "going to bed", "end of night".
+description: End-of-session closeout. Audits work done this session, reconciles forge issues vs TODO/DONE files vs actual code, closes what is truly complete, narrows residue, moves completed todos to done/, commits + pushes cleanup, leaves a status report. Anti-drift, anti-fake-completion. In boss-employee mode optionally posts a forge-comment digest so the boss can skim progress in the forge UI when not in Claude. Trigger:  "/team:goodnight", "sign off", "wrap up", "closeout", "going to bed", "end of night".
 user_invocable: true
 arg_description: '[--no-commit] [--no-digest] [--dry-run]'
 allowed-tools:
@@ -26,7 +26,7 @@ Same as `/team:whatdoido` Steps 0-2.
 | Flag | Effect |
 |---|---|
 | `--no-commit` | Do the reconciliation but do not create commits. Useful when reviewing. |
-| `--no-digest` | Skip the boss-comment digest in boss-employee mode (e.g. you're shutting down between sessions, not at end of day). |
+| `--no-digest` | Skip the boss-comment digest in boss-employee mode (e.g. you're shutting down between sessions, or the boss has been running their own `/team:whatdoido` so the digest is redundant). |
 | `--dry-run` | Print everything that would happen but make no writes, commits, or forge mutations. |
 
 ## Step 2: Capture this-session deltas
@@ -101,11 +101,11 @@ chore(closeout): <N> closed, <M> status updates (<date>)
 
 If push-on-commit is desired, push to origin. Default behavior: commit, do not push (let the user review in `git log` first; many users push manually after `/team:goodnight`).
 
-## Step 7: Boss digest (boss-employee mode only)
+## Step 7: Boss digest (boss-employee mode only, optional)
 
 If `team.mode = "boss-employee"` and `--no-digest` is not set:
 
-Build a digest of this session's work targeted at the boss:
+Build a digest of this session's work targeted at the boss. Useful when the boss is in the forge UI more than in Claude:
 
 ```
 **Session digest — <date>**

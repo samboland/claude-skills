@@ -9,7 +9,7 @@ Two-person dev team workflow as Claude Code skills. Drop into any project where 
 - **Identity-aware skills**: detect who's at the keyboard via git config; surface the right inbox.
 - **Two relationship modes**:
   - **peer**: two equal partners; either can assign, either can ask the other a question.
-  - **boss-employee**: assignment defaults top-down; employee works in Claude, boss works in the forge UI. Goodnight digest posts to GH so the boss sees progress without opening Claude.
+  - **boss-employee**: assignment defaults top-down (boss → employee); a `/team:goodnight` digest can post to GH as a forge comment so the boss can track progress in the forge UI when they're not in Claude.
 
 ## Install
 
@@ -46,9 +46,9 @@ See `docs/modes.md` for the full matrix. Quick form:
 |  | peer | boss-employee |
 |---|---|---|
 | Default issue assignee | unspecified, asked at creation | the employee |
-| Status digest target | local DONE.md only | local DONE.md + forge issue comment |
+| Status digest target | local DONE.md only | local DONE.md + (optional) forge issue comment so boss can skim in the forge UI |
 | Question docs | one shared `QUESTIONS.md`, both contribute | `QUESTIONS-FOR-<BOSS>.md`, employee asks up |
-| Source of truth | usually file-first | usually forge-first (so boss can edit issues directly) |
+| Source of truth | usually file-first | either; forge-first works well if the boss prefers editing in the GH UI directly |
 
 ## License
 
