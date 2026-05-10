@@ -94,6 +94,7 @@ Read:
 - `TODO.md`: index. In peer mode, look for the caller's owner section if grouped by owner; otherwise scan all priorities. In boss-employee mode, scan all (employee inherits everything by default).
 - `DONE.md` tail (last 20 lines): recent momentum / wins.
 - `<questions_file>` from config: entries with `**Answer:** _(open)_` are things the caller is waiting on (in peer mode, the caller may also have unanswered questions FROM the other person — those are blocking the caller's response).
+- For each open todo assigned to the caller, scan the `todo/NNNNN.md` body for a `**BMAD reference:**` line. If present and `bmad.enabled = true`, capture the referenced story / workflow / epic ID — this becomes the "pointer" rendered next to the task in Step 7.
 
 If `[source_of_truth].mode = "file-first"`, files are authoritative; forge mismatches are flagged in `--verbose` only. If `forge-first`, forge is authoritative; local file mismatches are flagged because they may indicate forge updates that haven't been pulled yet.
 
@@ -107,6 +108,8 @@ Identify:
 - **Active epics**: keys matching `epic-N` with status `in-progress`.
 
 For each active story, the corresponding file lives at `<bmad.implementation_path>/<story-id>.md`. Read the first ~30 lines to extract the story title and `Status:` line for cross-check.
+
+**Cross-link with /team todos**: for each todo's `**BMAD reference:**` line captured in Step 4, look up the referenced story / workflow / epic in the BMAD state. If the referenced story exists, attach its current `Status:` and the path to the story file so Step 7 can render the pointer. If the reference points at something that doesn't exist (typo, deleted story), flag it: "task #NNNNN references story `<id>` which is not in sprint-status.yaml."
 
 This is read-only. The team plugin does not mutate sprint-status.yaml or story files — that's BMAD's responsibility, done via BMAD's SM/dev/qa workflows.
 
@@ -179,6 +182,8 @@ The other member cannot move on these until you answer or merge. Doing any is pu
 1. <Friendly sentence describing the move.>
    Why: <one-sentence reason>
    Links: `<file-path>` · <forge URL> · <related-todo>
+   [if the task has a **BMAD reference:** line:]
+   Points at: BMAD <story|workflow|epic> `<id>` (status: <story-status>) -- goal: <task's Goal: line>
 2. ...
 
 ## Heads-up from the other side

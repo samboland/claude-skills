@@ -47,8 +47,9 @@ Before writing:
 
 - **Em-dash check**: if `conventions.em_dash_ban = true`, reject U+2014 (em dash) and U+2013 (en dash) in the body. Suggest `:` for definition / appositive, `;` for clause-join, `.` for sentence break. Block until clean.
 - **Title format**: `<title>` becomes `# #NNNNN <title>` in the file (single space between `#NNNNN` and title text). No em dashes in titles either if banned.
+- **Title self-containment**: titles like "fix the bug" or "update the thing" without a subject get rejected with a rewrite suggestion. **Exception**: titles that point at BMAD work (e.g. "Implement BMAD story 7-1", "Run the qa workflow on epic-3") are self-contained even if the verb is generic, because the BMAD ID disambiguates. Don't reject these.
 - **Owner is a real team member**: if owner doesn't match `team-config.toml`, bail.
-- **Body length**: warn if under 30 chars (probably not enough context) or over 4000 chars (consider splitting).
+- **Body length**: warn if under 30 chars (probably not enough context) or over 4000 chars (consider splitting). For pointer-pattern tasks (BMAD reference + Goal lines), 30 chars is too low — require at least the goal line.
 
 ## Step 4: Compute next ID
 
@@ -65,6 +66,10 @@ Path: `todo/<NNNNN>.md`. Format:
 
 **Owner:** <Owner> | **Priority:** <Priority> | **Status:** <status-or-`none`>
 
+[optional, when the task points at planned work elsewhere:]
+**BMAD reference:** story `<story-id>`  |  workflow `bmad-bmm-<name>`  |  epic `<epic-id>`
+**Goal:** <one-sentence outcome the task is meant to achieve>
+
 <Body>
 
 ## Notes
@@ -73,6 +78,18 @@ Path: `todo/<NNNNN>.md`. Format:
 ```
 
 Then update `TODO.md`: insert a new `- [ ] [<Title>](todo/<NNNNN>.md) <status-tag>` line under the appropriate priority section.
+
+### Task-as-pointer pattern
+
+Tasks don't have to *be* the work. They can be operational handles that point at BMAD work (a story, a workflow, an epic) and state the goal of executing it. Examples:
+
+- "Implement BMAD story 7-1 — get franchisee sale CRUD demoable" with `**BMAD reference:** story 7-1-franchise-sale-management`.
+- "Run bmad-bmm-create-architecture for the messaging refactor" with `**BMAD reference:** workflow bmad-bmm-create-architecture`.
+- "Close out epic-3 retrospective" with `**BMAD reference:** epic epic-3`.
+
+The pointer pattern is recognized when the body contains a line starting with `**BMAD reference:**`. `/team:hi` will surface the referenced story's current status next to the task; `/team:bye` will flag when a referenced story moves status during a session. The pointer is a hint, not a binding — closing the task is still a manual decision.
+
+When the user files an obviously-pointer-shaped task ("implement story 7-1", "run the qa workflow", etc.) and `bmad.enabled = true`, suggest filling in the `**BMAD reference:**` and `**Goal:**` lines via `AskUserQuestion`. Don't insist; some tasks named after BMAD work are still meant to be ad-hoc.
 
 ## Step 6: Mirror to the forge
 

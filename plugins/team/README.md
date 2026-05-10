@@ -70,7 +70,26 @@ When enabled, the team skills become BMAD-aware **without managing BMAD state**:
 - `/team:sync` excludes `<implementation_path>` and `<planning_path>` so BMAD story files never get mirrored as forge issues.
 - `/team:help` shows epic + story counts by status.
 
-The two systems serve different layers: BMAD owns planned work (epics → stories with acceptance criteria), the team plugin owns operational work (ad-hoc tasks, bugs, decisions, questions, daily triage). They coexist; they don't merge.
+### Task-as-pointer pattern
+
+A team task doesn't have to *be* the work — it can be an **operational handle** pointing at planned BMAD work, with a goal stated in the task body. Add a `**BMAD reference:**` line to the body:
+
+```markdown
+# #00042 Implement BMAD story 7-1
+
+**Owner:** sam | **Priority:** High | **Status:** WIP
+**BMAD reference:** story `7-1-franchise-sale-management`
+**Goal:** Get franchisee sale CRUD demoable end-to-end.
+
+Plan:
+- Run bmad-bmm-dev-story for 7-1
+- Verify acceptance criteria
+- bmad-bmm-code-review when ready
+```
+
+When a task carries a BMAD reference, `/team:hi` renders the referenced story's status next to the task in the ranked-moves list. `/team:bye` flags pointer tasks where the referenced story moved status this session, prompting "review whether to close." Closing the task is still a human decision — the task may have followup (docs, demo, cleanup) that outlives the story.
+
+The two systems serve different layers: BMAD owns planned work (epics → stories with acceptance criteria), the team plugin owns operational work (ad-hoc tasks, bugs, decisions, questions, daily triage, *and* pointer tasks that orchestrate BMAD execution). They coexist; they don't merge.
 
 ## License
 

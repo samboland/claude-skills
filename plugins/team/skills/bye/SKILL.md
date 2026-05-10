@@ -68,8 +68,15 @@ Inspect the session's file deltas (from Step 2). Filter to paths under `<bmad.im
 For each touched file, capture:
 - Story ID (filename without extension).
 - The `Status:` line value at HEAD (read the current file).
+- The previous `Status:` value (parse `git show HEAD~1:<path>` if the file existed before the session, else mark as "new").
 
 Build a fourth bucket: **BMAD**. This is a read-only annotation, not an action queue. The `/team:bye` skill never edits sprint-status.yaml or story files; that's BMAD's job. Surface it in the report so the caller (and the boss-digest) sees what BMAD-tracked work moved this session.
+
+**Cross-link with pointer-pattern todos**: for each todo in `todo/`, scan for a `**BMAD reference:**` line. If the referenced story is one whose status changed this session, surface it as a "review-whether-to-close" suggestion in the audit:
+
+> task #00042 (`<title>`) points at story `7-1-...` which moved `in-progress` → `review` this session — review whether the operational task is also done, or whether there's still QA / followup work.
+
+This is a *suggestion*, not a CLOSE bucket entry. Whether the operational task closes alongside the BMAD story is a human decision: the task may have follow-up work (cleanup, docs, demo prep) that outlives the story.
 
 ## Step 4: Confirm with caller
 
@@ -88,6 +95,9 @@ Audit results:
   - BMAD touches (read-only): <T> story files, <S> sprint-status changes
       <bmad-path>/7-1-franchise-sale-management.md  Status: in-progress → review (in <sha>)
       <bmad-path>/sprint-status.yaml  (3 lines changed)
+      ...
+  - Pointer review (only if any pointer-pattern todo references a story that moved this session):
+      todo/00042.md  "Implement BMAD story 7-1" → referenced story now `review`. Close the task?
       ...
 
 Proceed with all closures + updates? [y/N/edit]
@@ -145,6 +155,9 @@ Questions for <boss>: <Q> open
 BMAD story progress (tracked in BMAD, not /team):
   - <story-id>  Status: <old> → <new>  (<sha>)
   - sprint-status.yaml updated
+[only if any pointer-pattern todo references a story that moved this session:]
+Pointer-pattern todos at decision point:
+  - todo/00042 ("Implement BMAD story 7-1") → story now `review`; goal was "<task goal>" — done?
 ```
 
 Where to post:
