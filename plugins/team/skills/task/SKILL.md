@@ -126,9 +126,12 @@ Filed: todo/<NNNNN>.md
 Forge: <URL>
 Owner: <Owner>
 Priority: <Priority>
+Branch: <current-branch>  (only if commit was made and current != default)
 
 Next: <one-sentence what-to-do hint based on owner + priority>
 ```
+
+The forge issue exists immediately regardless of which branch the file commit landed on — the boss / other member sees the issue in GitHub the moment Step 6 finishes. If the file commit is on a feature branch, the local `todo/NNNNN.md` only reaches `<default>` when the branch merges; that's expected, since the forge issue is the canonical record in forge-first projects.
 
 ## Constraints
 

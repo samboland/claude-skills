@@ -40,10 +40,20 @@ Pick the forge CLI: `gh` for github, `glab` for gitlab. Verify it's installed an
 
 ## Step 1: Sync with remote
 
-Before triage, refresh:
-- `git fetch --all --prune`
-- `git status -sb` and read the ahead/behind line. If `behind N`, fast-forward with `git pull --ff-only`. If the working tree is dirty, `git stash -u`, pull, `git stash pop`. If fast-forward fails (diverged or unstashable conflict), stop and print a one-line "local + origin diverged, sync by hand" rather than recommending against stale state.
-- Capture the **origin tip anchor**: `git log -1 --format="%h %an %ar %s" origin/main` (or whatever the default branch is). Show this in the opening line so the caller sees how fresh the snapshot is.
+Detect the branch state up front:
+- **Default branch**: `git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's@^origin/@@'`. Fall back to `main` if the symbolic-ref isn't set (rare).
+- **Current branch**: `git branch --show-current`. Empty means detached HEAD — print "detached HEAD; check out a branch and rerun" and stop.
+
+Refresh:
+- `git fetch --all --prune` (always; cheap and metadata-only).
+- **If current branch == default branch**: `git status -sb` and read the ahead/behind line. If `behind N`, fast-forward with `git pull --ff-only`. If the working tree is dirty, `git stash -u`, pull, `git stash pop`. If fast-forward fails, stop and print a one-line "local + origin diverged, sync by hand."
+- **If current branch != default branch** (i.e. you're on a feature branch): **do not pull.** Auto-pulling would either silently switch context or merge in unwanted commits. Just report the branch state — the caller knows whether they want to rebase / merge / pull manually.
+
+Capture two anchors:
+- **Default tip**: `git log -1 --format="%h %an %ar %s" origin/<default>` — what's the most recent commit on the release line.
+- **Branch state**: `git rev-list --left-right --count origin/<default>...HEAD` for ahead/behind vs. default; `git rev-list --left-right --count origin/<current>...HEAD` for ahead/behind vs. own remote (if `origin/<current>` exists; if not, "branch not yet pushed").
+
+Both anchors render in the opening lines so the caller sees their position relative to release AND their own published branch state.
 
 A clean fetch is not proof of "no other-member activity." Negative claims about the other person's recent activity must cite a sha + relative time, not be asserted bare. See Step 7.
 
@@ -88,12 +98,18 @@ If `[source_of_truth].mode = "file-first"`, files are authoritative; forge misma
 
 ## Step 5: Read recent git activity
 
-Always read against `origin/<default-branch>` (typically `origin/main`), not local HEAD.
+Two views, since the caller may be on a feature branch:
 
-- `git log --author="<caller-email>" --since="7 days ago" --oneline origin/main`: what has the caller shipped?
-- `git log --since="48 hours ago" --pretty=format:"%h %an %ar %s" origin/main`: what landed across the repo recently, with author + relative time visible.
-- `git log --author="<other-member-email-or-login>" -n 5 --pretty=format:"%h %ar %s" origin/main`: the OTHER member's most recent activity, used as the anchor for Step 7.
+**Release-line activity** (always anchored at `origin/<default>`):
+- `git log --author="<caller-email>" --since="7 days ago" --oneline origin/<default>`: what has the caller shipped to the release line?
+- `git log --since="48 hours ago" --pretty=format:"%h %an %ar %s" origin/<default>`: what landed on the release line recently, with author + relative time.
+- `git log --author="<other-member-email-or-login>" -n 5 --pretty=format:"%h %ar %s" origin/<default>`: the OTHER member's most recent release-line activity, used as the anchor for Step 7.
+
+**Caller's branch progress** (only if current != default):
+- `git log origin/<default>..HEAD --pretty=format:"%h %ar %s"`: commits on the feature branch not yet on the release line.
 - `git status --short`: any uncommitted work? If yes, that's always the top of the next-moves list.
+
+If on the default branch: skip the "branch progress" view; uncommitted work alone is enough.
 
 ## Step 6: Rank
 
@@ -120,11 +136,13 @@ Look up actual issue numbers from the Step 3 fetch; do not invent.
 
 ### Output shape
 
-Open with one orienting line, then:
+Open with one orienting line, then a branch-state block, then content. Branch state is two lines when the caller is on a feature branch, one line on the default branch.
 
 ```
-Hey <Name> -- here's where you stand today. Last shipped <date> (<short-sha>), <N> commits in the past week.
-origin/main HEAD: <sha> <author> <relative-time> <subject>
+Hey <Name> -- here's where you stand today. Last shipped to <default> <date> (<short-sha>), <N> commits in the past week.
+origin/<default> HEAD: <sha> <author> <relative-time> <subject>
+[only if on a feature branch:]
+You're on `<branch>`: <N> commits ahead of origin/<default>, <M> ahead / <K> behind origin/<branch>  (or "branch not yet pushed").
 
 ## Uncommitted work
 <either a clean-tree line or a bulleted file list with one-line intent>
@@ -174,7 +192,8 @@ When caller role is `boss`:
 - **Never invent priority.** No Priority field → treat as Medium / P2.
 - **Never promote external-blocked items above actionable ones.**
 - **Negative claims about other-member activity must cite sha + relative time.** "Rob's last push was `dc128d3` two hours ago, nothing since" is fine. "Rob hasn't pushed in 48h" without a sha anchor is not.
-- **Always render the origin tip anchor in the opening lines**, even on a clean fetch.
+- **Always render the `origin/<default>` tip anchor in the opening lines**, even on a clean fetch.
+- **Never auto-pull when HEAD is on a feature branch.** Auto-pulling silently switches context or merges in unwanted commits. Fetch only; report state; let the caller decide whether to rebase / merge.
 - **Skill output uses natural English** even when caveman mode is active session-wide. Deliberate carve-out.
 
 ## Related

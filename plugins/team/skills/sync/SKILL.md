@@ -102,6 +102,7 @@ Brief output:
 ```
 Mode: <pull|push>
 Source of truth: <file-first|forge-first>
+Branch: <current-branch>  (note if != default; file writes / commit will land here)
 
 Pulled: <N> new files from forge
 Pushed: <M> new issues to forge
@@ -114,6 +115,8 @@ Flags:
 
 Run /team:sync --direction <opposite> to handle the flags.
 ```
+
+If the caller is on a feature branch and the sync writes ≥1 local files, append a one-line note to the report: "Files landed on `<branch>`; they reach `<default>` when the branch merges. Forge issues are unaffected by branch state."
 
 ## Step 7: Commit (push direction only)
 

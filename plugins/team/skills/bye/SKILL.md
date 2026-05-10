@@ -31,14 +31,19 @@ Same as `/team:hi` Steps 0-2.
 
 ## Step 2: Capture this-session deltas
 
-Define "this session" as: commits since the last push to origin, plus uncommitted work. Specifically:
+Detect the branch state up front:
+- **Default branch**: `git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's@^origin/@@'`. Fall back to `main`.
+- **Current branch**: `git branch --show-current`. If empty (detached HEAD), stop with a one-line "detached HEAD; check out a branch and rerun."
 
-- `git log origin/<default-branch>..HEAD --oneline` for committed-not-pushed.
+Define "this session" as **unpushed work** plus uncommitted work, regardless of which branch you're on. This works correctly on long-lived feature branches: it reflects what changed since the caller last synced, not everything they've done since branch point.
+
+- **Compare base**: `origin/<current>` if `git rev-parse --verify origin/<current>` succeeds, else `origin/<default>` (branch not yet pushed — fall back so the closeout still has a base to diff from).
+- `git log <compare-base>..HEAD --oneline` for committed-not-pushed.
 - `git status --short` for uncommitted.
-- `git diff origin/<default-branch>..HEAD --stat` for committed-not-pushed file deltas.
+- `git diff <compare-base>..HEAD --stat` for committed-not-pushed file deltas.
 - `git diff --stat` for uncommitted file deltas.
 
-Combine into a single "session work" list with file paths and one-line intent (parsed from commit messages where possible).
+Combine into a single "session work" list with file paths and one-line intent (parsed from commit messages where possible). Render the branch context at the top of the report: "Branch: `<current>` · base: `<compare-base>`."
 
 ## Step 3: Audit todo/done state
 
@@ -98,6 +103,8 @@ If `--no-commit`, skip. Otherwise:
 ```
 chore(closeout): <N> closed, <M> status updates (<date>)
 ```
+
+The commit lands on the current branch. If the caller is on a feature branch, the closeout becomes part of that feature's history and merges to `<default>` when the branch does.
 
 If push-on-commit is desired, push to origin. Default behavior: commit, do not push (let the user review in `git log` first; many users push manually after `/team:bye`).
 
