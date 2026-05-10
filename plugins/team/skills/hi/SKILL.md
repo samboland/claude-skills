@@ -1,6 +1,6 @@
 ---
-name: whatdoido
-description: Read-only triage for the developer who invoked the skill. Identifies the caller via git config (with env var fallback), pulls their open issues from the forge + their open todos from local files, scans recent commits, and returns a ranked next-moves list. Config-driven; supports peer + boss-employee modes. Use when the developer asks "what should I work on" / "what do I do" / "/team:whatdoido".
+name: hi
+description: Read-only triage for the developer who invoked the skill. Identifies the caller via git config (with env var fallback), pulls their open issues from the forge + their open todos from local files, scans recent commits, and returns a ranked next-moves list. Config-driven; supports peer + boss-employee modes. Use when the developer asks "what should I work on" / "what do I do" / "/team:hi".
 user_invocable: true
 arg_description: '[--verbose]'
 allowed-tools:
@@ -10,7 +10,7 @@ allowed-tools:
   - Grep
 ---
 
-# /team:whatdoido
+# /team:hi
 
 A "where am I, what's next" snapshot for whichever team member just invoked the skill. Read-only. No writes, no commits, no forge mutations.
 
@@ -179,7 +179,8 @@ When caller role is `boss`:
 
 ## Related
 
-- `/team:sync-tasks`: sibling skill for pushing/pulling between files and the forge.
-- `/team:issue`: builder for new tasks.
-- `/team:goodnight`: end-of-session closeout.
+- `/team:sync`: sibling skill for pushing/pulling between files and the forge.
+- `/team:task`: builder for new tasks.
+- `/team:bye`: end-of-session closeout.
+- `/team:help`: read-only file-state snapshot + command list.
 - `team-config.toml`: source of all configurable behavior.

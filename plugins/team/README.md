@@ -9,7 +9,7 @@ Two-person dev team workflow as Claude Code skills. Drop into any project where 
 - **Identity-aware skills**: detect who's at the keyboard via git config; surface the right inbox.
 - **Two relationship modes**:
   - **peer**: two equal partners; either can assign, either can ask the other a question.
-  - **boss-employee**: assignment defaults top-down (boss → employee); a `/team:goodnight` digest can post to GH as a forge comment so the boss can track progress in the forge UI when they're not in Claude.
+  - **boss-employee**: assignment defaults top-down (boss → employee); a `/team:bye` digest can post to GH as a forge comment so the boss can track progress in the forge UI when they're not in Claude.
 
 ## Install
 
@@ -26,7 +26,7 @@ In the project root:
 2. Create `TODO.md` and `DONE.md` (templates included).
 3. Create `todo/` and `done/` directories.
 4. Add the team block from `templates/CLAUDE-team-block.md` to your project's `CLAUDE.md`.
-5. Run `/team:sync-tasks` to seed local files from existing GH issues (forge-first projects) or `/team:whatdoido` to confirm config is read correctly.
+5. Run `/team:sync` to seed local files from existing GH issues (forge-first projects) or `/team:help` to confirm config is read correctly.
 
 Full walkthrough: `docs/setup.md`.
 
@@ -34,10 +34,11 @@ Full walkthrough: `docs/setup.md`.
 
 | Skill | Purpose |
 |---|---|
-| `/team:whatdoido` | Read-only triage: identifies you via git config, pulls your open work from forge + files, returns a ranked next-moves list. |
-| `/team:issue` | Interactive builder for a new task: creates `todo/NNNNN.md` and a forge issue, sets owner per config + mode. |
-| `/team:goodnight` | End-of-session closeout: reconciles forge ↔ files ↔ git, closes finished work, posts a status digest (boss-employee mode adds a forge comment so the boss sees it). |
-| `/team:sync-tasks` | Manual sync between local task files and forge issues. Direction depends on `source_of_truth.mode`. |
+| `/team:hi` | Read-only triage: identifies you via git config, pulls your open work from forge + files, returns a ranked next-moves list. |
+| `/team:task` | Interactive builder for a new task: creates `todo/NNNNN.md` and a forge issue, sets owner per config + mode. |
+| `/team:bye` | End-of-session closeout: reconciles forge ↔ files ↔ git, closes finished work, posts a status digest (boss-employee mode adds a forge comment so the boss sees it). |
+| `/team:sync` | Manual sync between local task files and forge issues. Direction depends on `source_of_truth.mode`. |
+| `/team:help` | Read-only file-state snapshot + command list. No git, no forge. Use for "where am I" without the network round-trips of `/team:hi`. |
 
 ## Modes
 

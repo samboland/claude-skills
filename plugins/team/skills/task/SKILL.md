@@ -1,6 +1,6 @@
 ---
-name: issue
-description: Interactive builder for a new task. Walks the user through title, owner, priority, status, and body; validates against the team format rules; writes `todo/NNNNN.md`; updates `TODO.md`; mirrors to the forge as a new issue. Config-driven; supports peer + boss-employee modes. Use when the developer says "new todo", "open an issue", "/team:issue", or wants to file a task.
+name: task
+description: Interactive builder for a new task. Walks the user through title, owner, priority, status, and body; validates against the team format rules; writes `todo/NNNNN.md`; updates `TODO.md`; mirrors to the forge as a new issue. Config-driven; supports peer + boss-employee modes. Use when the developer says "new todo", "open an issue", "/team:task", or wants to file a task.
 user_invocable: true
 arg_description: '[title]'
 allowed-tools:
@@ -13,17 +13,17 @@ allowed-tools:
   - AskUserQuestion
 ---
 
-# /team:issue
+# /team:task
 
 Interactive builder for a new `todo/NNNNN.md` file plus its forge-issue mirror.
 
 ## Step 0: Read config
 
-Same as `/team:whatdoido` Step 0. Bail with a hint if `team-config.toml` is missing.
+Same as `/team:hi` Step 0. Bail with a hint if `team-config.toml` is missing.
 
 ## Step 1: Identify the caller
 
-Same as `/team:whatdoido` Step 2. The caller is used as the default reporter, and (in peer mode) as a candidate default owner.
+Same as `/team:hi` Step 2. The caller is used as the default reporter, and (in peer mode) as a candidate default owner.
 
 ## Step 2: Gather inputs
 
@@ -115,7 +115,7 @@ When caller is `employee` and owner is set to `boss`:
 
 When caller is `boss` and owner is `employee`:
 - Add label `assigned-to-employee` (or skip if redundant with the assignee field).
-- The skill mentions: "Filed and assigned to <employee-name>; they will see it on their next `/team:whatdoido`."
+- The skill mentions: "Filed and assigned to <employee-name>; they will see it on their next `/team:hi`."
 
 ## Step 9: Final report
 
@@ -139,6 +139,8 @@ Next: <one-sentence what-to-do hint based on owner + priority>
 
 ## Related
 
-- `/team:sync-tasks`: pulls forge-side new issues that didn't go through this skill.
-- `/team:whatdoido`: surfaces the new task on the owner's next triage.
+- `/team:sync`: pulls forge-side new issues that didn't go through this skill.
+- `/team:hi`: surfaces the new task on the owner's next triage.
+- `/team:bye`: end-of-session closeout.
+- `/team:help`: read-only file-state snapshot + command list.
 - `team-config.toml`: drives every behavior above.

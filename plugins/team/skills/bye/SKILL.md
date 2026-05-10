@@ -1,6 +1,6 @@
 ---
-name: goodnight
-description: End-of-session closeout. Audits work done this session, reconciles forge issues vs TODO/DONE files vs actual code, closes what is truly complete, narrows residue, moves completed todos to done/, commits + pushes cleanup, leaves a status report. Anti-drift, anti-fake-completion. In boss-employee mode optionally posts a forge-comment digest so the boss can skim progress in the forge UI when not in Claude. Trigger:  "/team:goodnight", "sign off", "wrap up", "closeout", "going to bed", "end of night".
+name: bye
+description: End-of-session closeout. Audits work done this session, reconciles forge issues vs TODO/DONE files vs actual code, closes what is truly complete, narrows residue, moves completed todos to done/, commits + pushes cleanup, leaves a status report. Anti-drift, anti-fake-completion. In boss-employee mode optionally posts a forge-comment digest so the boss can skim progress in the forge UI when not in Claude. Trigger: "/team:bye", "sign off", "wrap up", "closeout", "going to bed", "end of night", "good night".
 user_invocable: true
 arg_description: '[--no-commit] [--no-digest] [--dry-run]'
 allowed-tools:
@@ -13,20 +13,20 @@ allowed-tools:
   - AskUserQuestion
 ---
 
-# /team:goodnight
+# /team:bye
 
 Mind-set: proactive finisher. Reconcile reality (git + forge + files + code) and close everything that is genuinely done. Surface anything that looks half-done so the next session starts clean.
 
 ## Step 0: Read config + identify caller
 
-Same as `/team:whatdoido` Steps 0-2.
+Same as `/team:hi` Steps 0-2.
 
 ## Step 1: Inputs
 
 | Flag | Effect |
 |---|---|
 | `--no-commit` | Do the reconciliation but do not create commits. Useful when reviewing. |
-| `--no-digest` | Skip the boss-comment digest in boss-employee mode (e.g. you're shutting down between sessions, or the boss has been running their own `/team:whatdoido` so the digest is redundant). |
+| `--no-digest` | Skip the boss-comment digest in boss-employee mode (e.g. you're shutting down between sessions, or the boss has been running their own `/team:hi` so the digest is redundant). |
 | `--dry-run` | Print everything that would happen but make no writes, commits, or forge mutations. |
 
 ## Step 2: Capture this-session deltas
@@ -84,7 +84,7 @@ For each CLOSE:
 - `git mv todo/NNNNN.md done/NNNNN.md`.
 - Append a closing line to the file: `**Closed:** <date> — <one-line summary>`.
 - Move the line in `TODO.md` to `DONE.md` under the current date heading. Create the heading if it doesn't exist.
-- Close the forge issue: `gh issue close <N> --comment "Closed via /team:goodnight: <one-line summary>"` (or `glab issue close`).
+- Close the forge issue: `gh issue close <N> --comment "Closed via /team:bye: <one-line summary>"` (or `glab issue close`).
 
 For each UPDATE STATUS:
 - Edit the `**Status:**` line on the file.
@@ -99,7 +99,7 @@ If `--no-commit`, skip. Otherwise:
 chore(closeout): <N> closed, <M> status updates (<date>)
 ```
 
-If push-on-commit is desired, push to origin. Default behavior: commit, do not push (let the user review in `git log` first; many users push manually after `/team:goodnight`).
+If push-on-commit is desired, push to origin. Default behavior: commit, do not push (let the user review in `git log` first; many users push manually after `/team:bye`).
 
 ## Step 7: Boss digest (boss-employee mode only, optional)
 
@@ -141,7 +141,7 @@ Brief, in chat:
 ✓ Boss digest posted: <forge URL>   (boss-employee mode only)
 
 Next session starts clean. <T> todos open: <C> critical, <H> high, <M> medium.
-Top of next-session queue: <link to next move from a quick /team:whatdoido pull>
+Top of next-session queue: <link to next move from a quick /team:hi pull>
 ```
 
 ## Constraints
@@ -151,11 +151,12 @@ Top of next-session queue: <link to next move from a quick /team:whatdoido pull>
 - **Never push without confirmation.** Commit yes (it's local), push no.
 - **Never edit forge issues for the OTHER member without flagging it.** If an issue assigned to the boss has a stale status, surface it; don't mutate it.
 - **Boss digest is optional.** `--no-digest` skips. Config `[team.digest_target] = "off"` disables it permanently.
-- **Skill output uses natural English** even when caveman is on. Match `/team:whatdoido` voice.
+- **Skill output uses natural English** even when caveman is on. Match `/team:hi` voice.
 
 ## Related
 
-- `/team:whatdoido`: read-only triage; what to look at next session.
-- `/team:sync-tasks`: deeper sync; goodnight only handles this-session deltas.
-- `/team:issue`: file new tasks the audit surfaced.
+- `/team:hi`: read-only triage; what to look at next session.
+- `/team:sync`: deeper sync; bye only handles this-session deltas.
+- `/team:task`: file new tasks the audit surfaced.
+- `/team:help`: read-only file-state snapshot + command list.
 - `team-config.toml`: drives mode + digest behavior.

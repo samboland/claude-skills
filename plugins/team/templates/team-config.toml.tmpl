@@ -11,7 +11,7 @@
 # "peer" or "boss-employee".
 # - peer: two equal partners; either can assign, either can ask the other.
 # - boss-employee: top-down assignment; one person owns scoping, the other
-#   executes. Goodnight posts a forge-comment digest so the boss can track
+#   executes. /team:bye posts a forge-comment digest so the boss can track
 #   progress in the forge UI without using Claude.
 mode = "peer"
 
@@ -44,24 +44,24 @@ type = "github"
 # owner/repo (GitHub) or group/project (GitLab).
 repo = "OWNER/REPO"
 
-# Default assignee for new issues created via /team:issue.
+# Default assignee for new issues created via /team:task.
 # In boss-employee mode this is typically the employee.
 # In peer mode leave empty and the skill will ask each time.
 default_assignee = ""
 
 [source_of_truth]
 # "file-first": local TODO/DONE files are canonical; forge issues mirror.
-#   /team:sync-tasks pushes file changes to the forge.
-#   New forge-side issues NOT created by the sync show up in /team:whatdoido
+#   /team:sync pushes file changes to the forge.
+#   New forge-side issues NOT created by the sync show up in /team:hi
 #   as "untracked, surface to file?" entries.
 # "forge-first": forge issues are canonical; local files are a read-cache.
-#   /team:sync-tasks pulls forge state into the files.
+#   /team:sync pulls forge state into the files.
 #   Local file edits push back, but get overwritten on next pull conflict.
 mode = "file-first"
 
 [conventions]
 # Em dashes (U+2014) and en dashes (U+2013) banned in task file bodies.
-# When true, /team:issue and /team:sync-tasks block on em-dash detection
+# When true, /team:task and /team:sync block on em-dash detection
 # and ask the user to rewrite (use ":" for definition / ";" for clause join).
 em_dash_ban = false
 
@@ -78,7 +78,7 @@ issue_title_format = "#{N} {title}"
 questions_file = "QUESTIONS.md"
 
 [labels]
-# Label names used by /team:sync-tasks when mirroring to the forge.
+# Label names used by /team:sync when mirroring to the forge.
 # Override these if your project already uses different label conventions.
 priority_critical = "Critical"
 priority_high = "High"

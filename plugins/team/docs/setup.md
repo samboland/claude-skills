@@ -53,17 +53,22 @@ Open the plugin's `templates/CLAUDE-team-block.md` and copy its content into you
 
 ## Step 5: Verify
 
-Run `/team:whatdoido`. Expect a "clean slate" message:
+Run `/team:help`. Expect a "clean slate" message confirming config is read and you're identified:
 
 ```
-Hey <Your Name> -- here's where you stand today. Last shipped <date> (<sha>), 0 commits in the past week.
-origin/main HEAD: <sha> ...
+You: <Your Name> (<role>)
+Mode: <peer|boss-employee>
+Forge: <github|gitlab> · <owner/repo>
+Source of truth: <file-first|forge-first>
 
-## Uncommitted work
-Tree clean.
+Files: TODO.md (0 open), DONE.md (0 done), todo/ (0), done/ (0), questions (0 open).
 
-## On your plate
-0 todos assigned, 0 questions, 0 blockers. Nothing to surface.
+Commands:
+  /team:hi    — triage your queue (live: forge + git + files)
+  /team:task  — file a new task (file + forge mirror)
+  /team:sync  — reconcile files ↔ forge
+  /team:bye   — end-of-session closeout
+  /team:help  — this snapshot
 ```
 
 If you see "Unknown caller" or "team-config.toml not found", the config or identity setup is off — fix and rerun.
@@ -73,7 +78,7 @@ If you see "Unknown caller" or "team-config.toml not found", the config or ident
 If the project already has GitHub/GitLab issues you want to mirror locally:
 
 ```
-/team:sync-tasks --direction pull
+/team:sync --direction pull
 ```
 
 This creates `todo/NNNNN.md` files for each open issue and `done/NNNNN.md` for each closed issue. Filenames are sequential starting at `00001`; the forge issue number is preserved in the file body via the `**Forge:** <url>` line.
@@ -83,7 +88,7 @@ After this, your local files mirror the forge state. From here on, the `source_o
 ## Step 7: First real task
 
 ```
-/team:issue
+/team:task
 ```
 
 Walk through the prompts. The skill creates `todo/00001.md` (or the next unused id), updates `TODO.md`, and creates a forge issue. Verify both exist.
@@ -106,12 +111,12 @@ git push
 
 **`glab: command not found`**: install GitLab CLI from `gitlab.com/gitlab-org/cli`. Authenticate with `glab auth login`.
 
-**"Forge issue created but `**Forge:**` line not in file"**: rare race condition. Re-run `/team:sync-tasks --direction pull` to backfill.
+**"Forge issue created but `**Forge:**` line not in file"**: rare race condition. Re-run `/team:sync --direction pull` to backfill.
 
-**Boss-employee mode: "boss isn't seeing the digest"**: check `[team.digest_target]` in config and verify the long-lived digest issue exists in the forge (label `team-digest`). If missing, the next `/team:goodnight` recreates it.
+**Boss-employee mode: "boss isn't seeing the digest"**: check `[team.digest_target]` in config and verify the long-lived digest issue exists in the forge (label `team-digest`). If missing, the next `/team:bye` recreates it.
 
 ## Two-person setup notes
 
 Both members install the plugin (one Claude Code install per machine, per project as needed). The config file in the repo is shared — both members read the same `team-config.toml`. Identity differs because `git config user.name` differs per machine.
 
-In boss-employee mode where the boss is comfortable in the forge UI for filing tickets, the digest comment from `/team:goodnight` gives them a passive "what shipped today" feed without needing to run skills themselves. They can still run `/team:whatdoido` or `/team:issue` when convenient — it's a preference, not a constraint.
+In boss-employee mode where the boss is comfortable in the forge UI for filing tickets, the digest comment from `/team:bye` gives them a passive "what shipped today" feed without needing to run skills themselves. They can still run `/team:hi` or `/team:task` when convenient — it's a preference, not a constraint.

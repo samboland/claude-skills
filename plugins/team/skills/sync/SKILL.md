@@ -1,6 +1,6 @@
 ---
-name: sync-tasks
-description: Sync local task files (TODO.md, DONE.md, todo/*.md, done/*.md) with the project's forge issues (GitHub via `gh` or GitLab via `glab`). Direction depends on `source_of_truth.mode` in team-config.toml. Tier-1 implementation is one-shot pull (forge → files) for forge-first projects; one-shot push (files → forge) for file-first; full bidirectional reconciliation marked TODO. Trigger: `/team:sync-tasks`, "sync tasks", "pull issues", "push todos to github".
+name: sync
+description: Sync local task files (TODO.md, DONE.md, todo/*.md, done/*.md) with the project's forge issues (GitHub via `gh` or GitLab via `glab`). Direction depends on `source_of_truth.mode` in team-config.toml. Tier-1 implementation is one-shot pull (forge → files) for forge-first projects; one-shot push (files → forge) for file-first; full bidirectional reconciliation marked TODO. Trigger: `/team:sync`, "sync tasks", "pull issues", "push todos to github".
 user_invocable: true
 arg_description: '[--dry-run] [--direction pull|push|auto]'
 allowed-tools:
@@ -13,13 +13,13 @@ allowed-tools:
   - AskUserQuestion
 ---
 
-# /team:sync-tasks
+# /team:sync
 
 Sync the local task ledger with the forge. One-shot, idempotent, opinionated about which side wins on conflict (per config).
 
 ## Step 0: Read config + identify caller
 
-Same as `/team:whatdoido` Steps 0-2.
+Same as `/team:hi` Steps 0-2.
 
 ## Step 1: Pick direction
 
@@ -112,7 +112,7 @@ Flags:
   - <Z> file-only entries (no forge mirror)
   - <W> forge-only entries (no local file)
 
-Run /team:sync-tasks --direction <opposite> to handle the flags.
+Run /team:sync --direction <opposite> to handle the flags.
 ```
 
 ## Step 7: Commit (push direction only)
@@ -147,7 +147,8 @@ These are noted in the file body as `# TIER 2:` comments where future implementa
 
 ## Related
 
-- `/team:issue`: creates a single new task with its forge mirror in one shot. Use this for one-offs; `/team:sync-tasks` is the batch reconciliation.
-- `/team:whatdoido`: read-only triage on what's currently open.
-- `/team:goodnight`: end-of-session closeout that includes a narrower sync.
+- `/team:task`: creates a single new task with its forge mirror in one shot. Use this for one-offs; `/team:sync` is the batch reconciliation.
+- `/team:hi`: read-only triage on what's currently open.
+- `/team:bye`: end-of-session closeout that includes a narrower sync.
+- `/team:help`: read-only file-state snapshot + command list.
 - `team-config.toml`: drives every behavior.

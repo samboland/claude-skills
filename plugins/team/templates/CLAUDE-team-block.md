@@ -16,18 +16,19 @@ This project uses the `team` skill plugin. Configuration lives in `team-config.t
 
 **Source of truth** is set in `team-config.toml` `[source_of_truth] mode`:
 - `file-first`: TODO/DONE files canonical; forge issues mirror.
-- `forge-first`: forge issues canonical; local files are a read-cache. New issues created in the forge UI surface to local files on next `/team:sync-tasks` pull.
+- `forge-first`: forge issues canonical; local files are a read-cache. New issues created in the forge UI surface to local files on next `/team:sync` pull.
 
 **Skills** (loaded by `team` plugin):
-- `/team:whatdoido`: read-only triage. Returns ranked next-moves for whoever is at the keyboard.
-- `/team:issue`: interactive builder for new tasks. Creates the file + the forge issue.
-- `/team:goodnight`: end-of-session closeout. Reconciles forge ↔ files ↔ git, closes finished work.
-- `/team:sync-tasks`: manual sync between local files and the forge.
+- `/team:hi`: read-only triage. Identifies you, reads forge + files + git, returns ranked next-moves.
+- `/team:task`: interactive builder for new tasks. Creates the file + the forge issue.
+- `/team:bye`: end-of-session closeout. Reconciles forge ↔ files ↔ git, closes finished work.
+- `/team:sync`: manual sync between local files and the forge.
+- `/team:help`: read-only file-state snapshot + command list. No git, no forge.
 
 **Title format**: `# #NNNNN <Title>` (single space after `#NNNNN`). Titles must be self-contained so the title alone answers "what is this?": the reader should not need to open the issue body to understand scope.
 
 **Mode-specific**:
 - `peer` mode: questions live in a single shared file (default `QUESTIONS.md`). Either member can ask the other.
-- `boss-employee` mode: questions live in `QUESTIONS-FOR-<BOSS>.md`. The employee asks up; the boss answers in the file or in the forge UI. `/team:goodnight` posts a forge-comment digest after each session so the boss sees progress without opening Claude.
+- `boss-employee` mode: questions live in `QUESTIONS-FOR-<BOSS>.md`. The employee asks up; the boss answers in the file or in the forge UI. `/team:bye` posts a forge-comment digest after each session so the boss sees progress without opening Claude.
 
 If you see `kind:question-from-employee` or `kind:question-for-boss` labels, that's the team plugin's mirror of the questions file in the forge.
