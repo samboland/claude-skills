@@ -35,6 +35,7 @@ Extract:
 - `forge.type` (github | gitlab) + `forge.repo`
 - `source_of_truth.mode` (file-first | forge-first)
 - `conventions.questions_file`
+- `bmad.enabled` and (if present) `bmad.implementation_path`, `bmad.planning_path`, `bmad.sprint_status_file`. If `[bmad]` is absent or `enabled = false`, all BMAD-related steps below are no-ops.
 
 Pick the forge CLI: `gh` for github, `glab` for gitlab. Verify it's installed and authed (`gh auth status` / `glab auth status`); if not, stop with a one-line install hint.
 
@@ -96,6 +97,19 @@ Read:
 
 If `[source_of_truth].mode = "file-first"`, files are authoritative; forge mismatches are flagged in `--verbose` only. If `forge-first`, forge is authoritative; local file mismatches are flagged because they may indicate forge updates that haven't been pulled yet.
 
+### BMAD planning layer (only if `bmad.enabled = true`)
+
+Read `<bmad.implementation_path>/<bmad.sprint_status_file>` (typically `_bmad-output/implementation-artifacts/sprint-status.yaml`). Parse the `development_status` block.
+
+Identify:
+- **Active stories**: keys with status `in-progress` or `review`. These are story IDs (e.g. `7-1-franchise-sale-management`).
+- **Next ready**: keys with status `ready-for-dev`.
+- **Active epics**: keys matching `epic-N` with status `in-progress`.
+
+For each active story, the corresponding file lives at `<bmad.implementation_path>/<story-id>.md`. Read the first ~30 lines to extract the story title and `Status:` line for cross-check.
+
+This is read-only. The team plugin does not mutate sprint-status.yaml or story files — that's BMAD's responsibility, done via BMAD's SM/dev/qa workflows.
+
 ## Step 5: Read recent git activity
 
 Two views, since the caller may be on a feature branch:
@@ -143,6 +157,8 @@ Hey <Name> -- here's where you stand today. Last shipped to <default> <date> (<s
 origin/<default> HEAD: <sha> <author> <relative-time> <subject>
 [only if on a feature branch:]
 You're on `<branch>`: <N> commits ahead of origin/<default>, <M> ahead / <K> behind origin/<branch>  (or "branch not yet pushed").
+[only if bmad.enabled and there's an active story:]
+Active BMAD story: `<story-id>` -- <story-title> (<status>).  [If multiple: list each on its own line.]
 
 ## Uncommitted work
 <either a clean-tree line or a bulleted file list with one-line intent>
@@ -151,6 +167,8 @@ You're on `<branch>`: <N> commits ahead of origin/<default>, <M> ahead / <K> beh
 - <N> todos assigned (<C> critical, <H> high, <M> medium)
 - <Q> questions waiting on you
 - <B> internal blockers / <X> external blockers
+[only if bmad.enabled:]
+- BMAD: <I> stories in-progress, <R> in review, <Y> ready-for-dev
 
 ## What's blocking <Other-Member>
 (skip if nothing)
@@ -194,6 +212,7 @@ When caller role is `boss`:
 - **Negative claims about other-member activity must cite sha + relative time.** "Rob's last push was `dc128d3` two hours ago, nothing since" is fine. "Rob hasn't pushed in 48h" without a sha anchor is not.
 - **Always render the `origin/<default>` tip anchor in the opening lines**, even on a clean fetch.
 - **Never auto-pull when HEAD is on a feature branch.** Auto-pulling silently switches context or merges in unwanted commits. Fetch only; report state; let the caller decide whether to rebase / merge.
+- **BMAD is read-only.** Surface active stories from `sprint-status.yaml`, but never edit it. Story state changes belong to the BMAD SM/dev/qa workflows, not this skill.
 - **Skill output uses natural English** even when caveman mode is active session-wide. Deliberate carve-out.
 
 ## Related

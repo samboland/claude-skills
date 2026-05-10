@@ -35,6 +35,7 @@ Extract:
 - `forge.type` (github | gitlab) + `forge.repo`
 - `source_of_truth.mode`
 - `conventions.questions_file`
+- `bmad.enabled` and (if present) `bmad.implementation_path`, `bmad.sprint_status_file`. If `[bmad]` is absent or `enabled = false`, skip BMAD counting in Step 2.
 
 ## Step 1: Identify the caller (best-effort, no prompting)
 
@@ -54,6 +55,10 @@ In boss-employee mode, also tag the caller with `(boss)` or `(employee)`.
 - `done/` exists? If yes, count `*.md` files (excluding `.gitkeep`).
 - `<questions_file>` exists? If yes, count lines containing `**Answer:** _(open)_`. If no, render `not yet created`.
 
+If `bmad.enabled = true`:
+- Read `<bmad.implementation_path>/<bmad.sprint_status_file>`. Parse the `development_status` block. Count epics by status (`backlog`, `in-progress`, `done`) and stories by status (`backlog`, `ready-for-dev`, `in-progress`, `review`, `done`).
+- If the sprint-status file is missing despite `bmad.enabled = true`, render `BMAD: enabled in config but sprint-status.yaml not found at <path>`.
+
 These are file existence + line counts only. No body parsing, no priority breakdown, no recent-activity scan. That's `/team:hi`'s job.
 
 ## Step 3: Print
@@ -72,6 +77,12 @@ Files:
   todo/         <T files>
   done/         <D files>
   <questions>   <Q open>  | not yet created
+
+[only if bmad.enabled:]
+BMAD:
+  Epics:    <E_total> total  (<E_done> done, <E_ip> in-progress, <E_bl> backlog)
+  Stories:  <S_total> total  (<S_done> done, <S_review> in review, <S_ip> in-progress, <S_ready> ready-for-dev, <S_bl> backlog)
+  Stories not yet done: <list of story IDs, max 5; "..." if more>
 
 Commands:
   /team:hi    — Live triage. Identifies you, pulls forge issues, scans recent

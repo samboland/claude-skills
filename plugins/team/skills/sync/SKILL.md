@@ -36,7 +36,7 @@ Same as `/team:hi` Steps 0-2.
 
 In parallel:
 
-- **Files**: read `TODO.md`, `DONE.md`, every `todo/*.md`, every `done/*.md`. For each, extract: id, title, owner, priority, status, body, forge-url-if-known.
+- **Files**: read `TODO.md`, `DONE.md`, every `todo/*.md`, every `done/*.md`. For each, extract: id, title, owner, priority, status, body, forge-url-if-known. **Never read or write under `<bmad.implementation_path>` or `<bmad.planning_path>` if `bmad.enabled = true`.** BMAD story files are not /team todos and must not be mirrored as forge issues — they have their own lifecycle.
 - **Forge**:
   - GitHub: `gh issue list --state all --json number,title,body,labels,assignees,state,updatedAt,url --limit 200`
   - GitLab: `glab issue list --all --output json` (with state filter)
@@ -147,6 +147,7 @@ These are noted in the file body as `# TIER 2:` comments where future implementa
 - **Em-dash humanize is body-only on push.** Titles fail-fast.
 - **Default `--direction` matches the source of truth.** The user opting into the opposite is explicit and confirmed.
 - **Use `git log -1 --format=%cI -- <path>` for file mtime, not filesystem mtime.** The latter is unreliable across clones.
+- **Never sync BMAD paths.** `<bmad.implementation_path>` and `<bmad.planning_path>` are BMAD's territory; story files are not /team todos. Treat any forge issue that looks like a BMAD story (e.g. title starts with `<N>-<N> `) as untracked and skip it with a one-line note instead of mirroring.
 
 ## Related
 

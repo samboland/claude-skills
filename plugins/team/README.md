@@ -51,6 +51,27 @@ See `docs/modes.md` for the full matrix. Quick form:
 | Question docs | one shared `QUESTIONS.md`, both contribute | `QUESTIONS-FOR-<BOSS>.md`, employee asks up |
 | Source of truth | usually file-first | either; forge-first works well if the boss prefers editing in the GH UI directly |
 
+## BMAD method integration (optional)
+
+If your project uses [BMAD method](https://github.com/BMad-Code/BMAD-METHOD) for planning (PRDs, epics, stories, sprint plans), opt in by adding a `[bmad]` section to `team-config.toml`:
+
+```toml
+[bmad]
+enabled = true
+implementation_path = "_bmad-output/implementation-artifacts"
+planning_path       = "_bmad-output/planning-artifacts"
+sprint_status_file  = "sprint-status.yaml"
+```
+
+When enabled, the team skills become BMAD-aware **without managing BMAD state**:
+
+- `/team:hi` surfaces the active BMAD story (status `in-progress` or `review`) in its opening lines, plus a "BMAD" line in "On your plate" with story-state counts.
+- `/team:bye` notes when this session's commits touched BMAD story files or `sprint-status.yaml`. The boss-digest mentions BMAD progress alongside team todos. **Never edits BMAD files** — story-state transitions belong to the BMAD SM/dev/qa workflows.
+- `/team:sync` excludes `<implementation_path>` and `<planning_path>` so BMAD story files never get mirrored as forge issues.
+- `/team:help` shows epic + story counts by status.
+
+The two systems serve different layers: BMAD owns planned work (epics → stories with acceptance criteria), the team plugin owns operational work (ad-hoc tasks, bugs, decisions, questions, daily triage). They coexist; they don't merge.
+
 ## License
 
 MIT.

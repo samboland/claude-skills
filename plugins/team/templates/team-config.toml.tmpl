@@ -90,3 +90,20 @@ status_blocked_internal = "Blocked (Internal)"
 status_blocked_external = "Blocked (External)"
 type_todo = "TODO"
 type_question = "Question"
+
+# Optional. Enable BMAD-method awareness in the /team:* skills.
+# When this section is present and [bmad] enabled = true:
+#   - /team:hi surfaces the active BMAD story (from sprint-status.yaml) in
+#     its opening lines.
+#   - /team:bye notes when this session's commits touched BMAD story files
+#     (but does NOT update sprint-status.yaml; that's BMAD's responsibility,
+#     done via the BMAD SM/dev/qa workflows).
+#   - /team:sync excludes _bmad-output/ paths so BMAD story files never get
+#     mirrored as forge issues.
+#   - /team:help renders epic + story counts by status.
+# Remove this section (or set enabled = false) to fully disable BMAD logic.
+# [bmad]
+# enabled = true
+# implementation_path = "_bmad-output/implementation-artifacts"
+# planning_path       = "_bmad-output/planning-artifacts"
+# sprint_status_file  = "sprint-status.yaml"

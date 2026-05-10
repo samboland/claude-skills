@@ -61,6 +61,16 @@ Build three buckets:
 - **UPDATE STATUS**: file should stay in `todo/` but its `**Status:**` line is stale (e.g. "WIP" when the work is paused, or no status when it's actually `BLOCKED on X`).
 - **LEAVE**: confirmed still in flight, no action needed.
 
+### BMAD touches (only if `bmad.enabled = true`)
+
+Inspect the session's file deltas (from Step 2). Filter to paths under `<bmad.implementation_path>/` matching `*.md` or `<bmad.sprint_status_file>`.
+
+For each touched file, capture:
+- Story ID (filename without extension).
+- The `Status:` line value at HEAD (read the current file).
+
+Build a fourth bucket: **BMAD**. This is a read-only annotation, not an action queue. The `/team:bye` skill never edits sprint-status.yaml or story files; that's BMAD's job. Surface it in the report so the caller (and the boss-digest) sees what BMAD-tracked work moved this session.
+
 ## Step 4: Confirm with caller
 
 Print a one-screen summary:
@@ -75,6 +85,10 @@ Audit results:
       todo/00134.md  Circuit breaker         →  status "WIP" → "WIP <date>: kill_switches landed; waiting on Upstash rebuild"
       ...
   - LEAVE: <M> todos (truly in flight)
+  - BMAD touches (read-only): <T> story files, <S> sprint-status changes
+      <bmad-path>/7-1-franchise-sale-management.md  Status: in-progress → review (in <sha>)
+      <bmad-path>/sprint-status.yaml  (3 lines changed)
+      ...
 
 Proceed with all closures + updates? [y/N/edit]
 ```
@@ -127,6 +141,10 @@ Blocked: <M> todos
   - #<N> <title> — blocker: <reason>; needs: <what unblocks>
 Questions for <boss>: <Q> open
   - <one-line Q text> — <questions-file>:Q<n>
+[only if bmad.enabled and there were BMAD touches:]
+BMAD story progress (tracked in BMAD, not /team):
+  - <story-id>  Status: <old> → <new>  (<sha>)
+  - sprint-status.yaml updated
 ```
 
 Where to post:
@@ -158,6 +176,7 @@ Top of next-session queue: <link to next move from a quick /team:hi pull>
 - **Never push without confirmation.** Commit yes (it's local), push no.
 - **Never edit forge issues for the OTHER member without flagging it.** If an issue assigned to the boss has a stale status, surface it; don't mutate it.
 - **Boss digest is optional.** `--no-digest` skips. Config `[team.digest_target] = "off"` disables it permanently.
+- **BMAD is read-only.** Surface story file touches in the audit + digest, but never edit `sprint-status.yaml` or story files. BMAD's SM/dev/qa workflows own that state. This skill only watches.
 - **Skill output uses natural English** even when caveman is on. Match `/team:hi` voice.
 
 ## Related
